@@ -4,11 +4,22 @@ on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
+  SQLX_VERSION: 0.6.2
+  SQLX_FEATURES: "rustls,postgres"
 
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -38,6 +49,15 @@ jobs:
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
@@ -53,9 +73,21 @@ jobs:
   coverage:
     name: Code coverage
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Install libpq
+        run: sudo apt-get update && sudo apt-get install postgresql-client -y
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
