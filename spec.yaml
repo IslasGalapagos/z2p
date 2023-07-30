@@ -6,7 +6,7 @@ services:
     dockerfile_path: Dockerfile
     source_dir: .
     github:
-      branch: main
+      branch: master
       deploy_on_push: true
       repo: IslasGalapagos/z2p
     health_check:
